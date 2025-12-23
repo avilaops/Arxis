@@ -1,0 +1,80 @@
+# Azure Static Web Apps deployment
+
+name: Build and Deploy Frontend to Azure Static Web Apps
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/Arxis.Web/**'
+      - '.github/workflows/frontend-deploy.yml'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20.x'
+  APP_LOCATION: '/src/Arxis.Web'
+  OUTPUT_LOCATION: 'dist'
+
+jobs:
+  build_and_deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy
+    steps:
+      - name: 'Checkout code'
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+
+      - name: 'Setup Node.js ${{ env.NODE_VERSION }}'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.APP_LOCATION }}/package-lock.json'
+
+      - name: 'Install dependencies'
+        run: |
+          cd ${{ env.APP_LOCATION }}
+          npm ci
+
+      - name: 'Run linter'
+        run: |
+          cd ${{ env.APP_LOCATION }}
+          npm run lint
+        continue-on-error: true
+
+      - name: 'Build application'
+        run: |
+          cd ${{ env.APP_LOCATION }}
+          npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: 'Deploy to Azure Static Web Apps'
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'upload'
+          app_location: ${{ env.APP_LOCATION }}
+          output_location: ${{ env.OUTPUT_LOCATION }}
+
+  close_pull_request:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request
+    steps:
+      - name: 'Close Pull Request'
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: 'close'

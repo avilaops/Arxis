@@ -1,0 +1,95 @@
+# Database Migrations - Run manually or after API deploy
+
+name: Database Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: '10.0.x'
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: 'Checkout code'
+        uses: actions/checkout@v4
+
+      - name: 'Setup .NET ${{ env.DOTNET_VERSION }}'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: 'Install EF Core tools'
+        run: dotnet tool install --global dotnet-ef
+
+      - name: 'Restore dependencies'
+        run: dotnet restore
+
+      - name: 'Build project'
+        run: dotnet build --configuration Release
+
+      - name: 'Generate migration script'
+        run: |
+          dotnet ef migrations script \
+            --idempotent \
+            --project src/Arxis.Infrastructure \
+            --startup-project src/Arxis.API \
+            --output migrations.sql
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+
+      - name: 'Upload migration script'
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-script-${{ inputs.environment }}
+          path: migrations.sql
+
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 'Run migrations on Azure SQL'
+        run: |
+          # Extract connection string parts
+          echo "Running migrations on ${{ inputs.environment }}"
+          
+          # Apply migrations using dotnet ef
+          dotnet ef database update \
+            --project src/Arxis.Infrastructure \
+            --startup-project src/Arxis.API \
+            --context ArxisDbContext
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+
+      - name: 'Verify migration'
+        run: |
+          echo "Verifying migration success..."
+          dotnet ef migrations list \
+            --project src/Arxis.Infrastructure \
+            --startup-project src/Arxis.API
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+
+      - name: 'Azure logout'
+        run: az logout
+        if: always()
