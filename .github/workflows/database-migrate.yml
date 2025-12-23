@@ -20,12 +20,14 @@ on:
         type: string
 
 env:
-  DOTNET_VERSION: '10.0.x'
+  DOTNET_VERSION: '8.0.x' # Mudado de 10.0.x para 8.0.x
 
 jobs:
   migrate:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    # Só roda se os secrets estiverem configurados
+    if: ${{ secrets.AZURE_CLIENT_ID != '' && secrets.AZURE_TENANT_ID != '' && secrets.AZURE_SUBSCRIPTION_ID != '' }}
     
     steps:
       - name: 'Checkout code'
@@ -70,7 +72,6 @@ jobs:
 
       - name: 'Run migrations on Azure SQL'
         run: |
-          # Extract connection string parts
           echo "Running migrations on ${{ inputs.environment }}"
           
           # Apply migrations using dotnet ef
