@@ -2,69 +2,84 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-class ApiService {
-  private api: AxiosInstance;
+// Helper para obter token do localStorage
+const getAuthToken = (): string | null => {
+  return localStorage.getItem('arxis_token');
+};
 
-  constructor() {
-    this.api = axios.create({
-      baseURL: API_BASE_URL,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+// Helper para criar headers com autenticação
+const getHeaders = (): HeadersInit => {
+  const token = getAuthToken();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
 
-    // Request interceptor
-    this.api.interceptors.request.use(
-      (config) => {
-        // Add auth token if available
-        const token = localStorage.getItem('auth_token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    // Response interceptor
-    this.api.interceptors.response.use(
-      (response) => response,
-      (error: AxiosError) => {
-        if (error.response?.status === 401) {
-          // Handle unauthorized
-          localStorage.removeItem('auth_token');
-          window.location.href = '/login';
-        }
-        return Promise.reject(error);
-      }
-    );
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Generic methods
-  async get<T>(url: string, params?: any): Promise<T> {
-    const response = await this.api.get<T>(url, { params });
-    return response.data;
+  return headers;
+};
+
+async function handleResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    // Se 401, redirecionar para login
+    if (response.status === 401) {
+      localStorage.removeItem('arxis_token');
+      localStorage.removeItem('arxis_user');
+      window.location.href = '/login';
+    }
+
+    const error = await response.text();
+    throw new Error(error || `HTTP error! status: ${response.status}`);
   }
 
-  async post<T>(url: string, data?: any): Promise<T> {
-    const response = await this.api.post<T>(url, data);
-    return response.data;
-  }
-
-  async put<T>(url: string, data?: any): Promise<T> {
-    const response = await this.api.put<T>(url, data);
-    return response.data;
-  }
-
-  async patch<T>(url: string, data?: any): Promise<T> {
-    const response = await this.api.patch<T>(url, data);
-    return response.data;
-  }
-
-  async delete<T>(url: string): Promise<T> {
-    const response = await this.api.delete<T>(url);
-    return response.data;
-  }
+  // Verificar se há conteúdo na resposta
+  const text = await response.text();
+  return text ? JSON.parse(text) : ({} as T);
 }
 
-export const apiService = new ApiService();
+export const apiService = {
+  async get<T>(endpoint: string): Promise<T> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    return handleResponse<T>(response);
+  },
+
+  async post<T, U>(endpoint: string, data: U): Promise<T> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<T>(response);
+  },
+
+  async put<T, U>(endpoint: string, data: U): Promise<T> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<T>(response);
+  },
+
+  async delete<T>(endpoint: string): Promise<T> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return handleResponse<T>(response);
+  },
+
+  async patch<T, U>(endpoint: string, data: U): Promise<T> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<T>(response);
+  },
+};
