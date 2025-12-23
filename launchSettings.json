@@ -1,0 +1,24 @@
+{
+  "profiles": {
+    "ARXIS API": {
+      "commandName": "Project",
+      "commandLineArgs": "run --project src/Arxis.API/Arxis.API.csproj",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000;https://localhost:5001"
+    },
+    "ARXIS API (Watch)": {
+      "commandName": "Project",
+      "commandLineArgs": "watch run --project src/Arxis.API/Arxis.API.csproj",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000;https://localhost:5001"
+    }
+  }
+}

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Arxis.Domain.Entities;
@@ -5,6 +6,7 @@ using Arxis.Infrastructure.Data;
 
 namespace Arxis.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class IssuesController : ControllerBase

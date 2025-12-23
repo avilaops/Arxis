@@ -16,6 +16,10 @@ public class User : BaseEntity
     public bool IsActive { get; set; } = true;
     public DateTime? LastLoginAt { get; set; }
     
+    // Authentication fields
+    public string PasswordHash { get; set; } = string.Empty;
+    public string Role { get; set; } = "User"; // Admin, Manager, User, Viewer
+    
     // Navigation properties
     public Guid? TenantId { get; set; }
     public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();

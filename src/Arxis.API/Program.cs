@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using Arxis.Infrastructure.Data;
-using Arxis.API.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Arxis.Infrastructure.Data;
+using Arxis.API.Middleware;
+using Arxis.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +23,9 @@ builder.Services.AddControllers()
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+// Register AuthService
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -26,7 +33,7 @@ builder.Services.AddSwaggerGen(c =>
     { 
         Title = "ARXIS API", 
         Version = "v1",
-        Description = "API para gerenciamento de obras - Plataforma ARXIS",
+        Description = "API para gerenciamento de obras - Plataforma ARXIS com autenticação JWT",
         Contact = new() 
         { 
             Name = "ARXIS Support", 
@@ -38,8 +45,36 @@ builder.Services.AddSwaggerGen(c =>
 // Configure Database
 builder.Services.AddDbContext<ArxisDbContext>(options =>
 {
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));    if (builder.Environment.IsDevelopment())    {        options.EnableSensitiveDataLogging();        options.EnableDetailedErrors();    }
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+    }
 });
+
+// Configure JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "SuaChaveSecretaMuitoSeguraComPeloMenos32Caracteres123456";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "ArxisAPI";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "ArxisWeb";
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -73,6 +108,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Arxis.Domain.Entities;
@@ -6,6 +7,7 @@ using TaskStatus = Arxis.Domain.Entities.TaskStatus;
 
 namespace Arxis.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TasksController : ControllerBase
