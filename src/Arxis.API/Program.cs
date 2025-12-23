@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Arxis.Infrastructure.Data;
 using Arxis.API.Middleware;
 using System.Text.Json.Serialization;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,10 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
+
+// Add FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
