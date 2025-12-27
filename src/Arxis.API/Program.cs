@@ -33,6 +33,12 @@ builder.Services.AddSingleton<ExternalServicesConfig>();
 // Register AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Register Email Service (inspired by avx-cell)
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Register Notification Service (inspired by avx-events pub/sub)
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 // Register File Storage Service
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 

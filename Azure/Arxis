@@ -1,0 +1,31 @@
+{
+    "apiVersion": "2020-02-02",
+    "id": "/subscriptions/3b49f371-dd88-46c7-ba30-aeb54bd5c2f6/resourceGroups/Arxis/providers/microsoft.insights/components/Arxis",
+    "name": "Arxis",
+    "type": "microsoft.insights/components",
+    "kind": "web",
+    "location": "westus2",
+    "tags": {},
+    "properties": {
+        "ApplicationId": "Arxis",
+        "AppId": "6d3864e6-7770-4fb4-87b0-9d831086a8ea",
+        "Application_Type": "web",
+        "Flow_Type": "Redfield",
+        "Request_Source": "IbizaWebAppExtensionCreate",
+        "InstrumentationKey": "6b65b548-3d2d-4974-aae1-76c946a47b57",
+        "ConnectionString": "InstrumentationKey=6b65b548-3d2d-4974-aae1-76c946a47b57;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/;ApplicationId=6d3864e6-7770-4fb4-87b0-9d831086a8ea",
+        "Name": "Arxis",
+        "CreationDate": "2025-12-23T08:41:14.1800672Z",
+        "TenantId": "3b49f371-dd88-46c7-ba30-aeb54bd5c2f6",
+        "provisioningState": "Succeeded",
+        "SamplingPercentage": null,
+        "RetentionInDays": 90,
+        "WorkspaceResourceId": "/subscriptions/3b49f371-dd88-46c7-ba30-aeb54bd5c2f6/resourceGroups/DefaultResourceGroup-WUS2/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-3b49f371-dd88-46c7-ba30-aeb54bd5c2f6-WUS2",
+        "IngestionMode": "LogAnalytics",
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled",
+        "DisableLocalAuth": true,
+        "Ver": "v2"
+    },
+    "etag": "\"300045ee-0000-0800-0000-694f12360000\""
+}

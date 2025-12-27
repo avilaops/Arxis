@@ -1,0 +1,52 @@
+{
+    "apiVersion": "2024-11-01",
+    "id": "/subscriptions/3b49f371-dd88-46c7-ba30-aeb54bd5c2f6/resourceGroups/Arxis/providers/Microsoft.Web/staticSites/Arxis",
+    "name": "Arxis",
+    "type": "microsoft.web/staticsites",
+    "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+    },
+    "location": "westus2",
+    "tags": {},
+    "properties": {
+        "defaultHostname": "kind-sand-04db77a1e.1.azurestaticapps.net",
+        "repositoryUrl": "https://github.com/avilaops/Arxis",
+        "branch": "main",
+        "customDomains": [],
+        "stableInboundIP": "20.99.163.40",
+        "privateEndpointConnections": [],
+        "stagingEnvironmentPolicy": "Enabled",
+        "allowConfigFileUpdates": true,
+        "contentDistributionEndpoint": "https://content-wus2.infrastructure.1.azurestaticapps.net",
+        "keyVaultReferenceIdentity": "SystemAssigned",
+        "userProvidedFunctionApps": null,
+        "linkedBackends": [],
+        "provider": "GitHub",
+        "enterpriseGradeCdnStatus": "Disabled",
+        "publicNetworkAccess": null,
+        "databaseConnections": [],
+        "trafficSplitting": {
+            "environmentDistribution": {
+                "default": 100
+            }
+        },
+        "targetResourceGroupResourceId": null,
+        "trialExpirationTimeUtc": null,
+        "prettyNameStatus": null,
+        "prettyName": null,
+        "prettyNameHostname": null,
+        "backendRegion": {
+            "regionName": null,
+            "status": null
+        },
+        "stagingEnvironmentRegion": null,
+        "deploymentAuthPolicy": "GitHub",
+        "federatedIdentityTenantId": null,
+        "federatedIdentityClientId": null,
+        "federatedIdentitySubscriptionId": null,
+        "deploymentStorageAccountResourceId": null,
+        "deploymentStorageAccountReferenceIdentity": null,
+        "networkConfigurations": null
+    }
+}

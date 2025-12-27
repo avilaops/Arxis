@@ -1,0 +1,14 @@
+{
+    "id": "/subscriptions/3b49f371-dd88-46c7-ba30-aeb54bd5c2f6/resourceGroups/Arxis",
+    "name": "Arxis",
+    "type": "Microsoft.Resources/resourceGroups",
+    "location": "westus2",
+    "tags": {
+        "ArxisVR": "Arxis",
+        "ArxisBuild": "Arxis",
+        "ArxisStructure": "Arxis"
+    },
+    "properties": {
+        "provisioningState": "Succeeded"
+    }
+}

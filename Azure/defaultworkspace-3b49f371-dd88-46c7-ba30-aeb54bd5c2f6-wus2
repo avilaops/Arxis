@@ -1,0 +1,31 @@
+{
+    "apiVersion": "2025-02-01",
+    "id": "/subscriptions/3b49f371-dd88-46c7-ba30-aeb54bd5c2f6/resourceGroups/DefaultResourceGroup-WUS2/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-3b49f371-dd88-46c7-ba30-aeb54bd5c2f6-WUS2",
+    "name": "DefaultWorkspace-3b49f371-dd88-46c7-ba30-aeb54bd5c2f6-WUS2",
+    "type": "microsoft.operationalinsights/workspaces",
+    "location": "westus2",
+    "properties": {
+        "customerId": "6e48f27e-ee58-46c8-b788-20275cf24d7a",
+        "provisioningState": "Succeeded",
+        "sku": {
+            "name": "PerGB2018",
+            "lastSkuUpdate": "2025-12-23T08:40:49.0934274Z"
+        },
+        "retentionInDays": 30,
+        "features": {
+            "legacy": 0,
+            "searchVersion": 1,
+            "enableLogAccessUsingOnlyResourcePermissions": true
+        },
+        "workspaceCapping": {
+            "dailyQuotaGb": -1,
+            "quotaNextResetTime": "2025-12-24T08:00:00Z",
+            "dataIngestionStatus": "RespectQuota"
+        },
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled",
+        "createdDate": "2025-12-23T08:40:49.0934274Z",
+        "modifiedDate": "2025-12-23T08:41:02.2904202Z"
+    },
+    "etag": "\"3900cfab-0000-0800-0000-694a559e0000\""
+}

@@ -1,0 +1,14 @@
+{
+    "apiVersion": "2024-11-30",
+    "id": "/subscriptions/3b49f371-dd88-46c7-ba30-aeb54bd5c2f6/resourceGroups/Arxis/providers/Microsoft.ManagedIdentity/userAssignedIdentities/arxis",
+    "name": "arxis",
+    "type": "microsoft.managedidentity/userassignedidentities",
+    "location": "westus2",
+    "tags": {},
+    "properties": {
+        "isolationScope": "None",
+        "tenantId": "0e53f641-197a-48b2-83a4-f8222f5d48c0",
+        "principalId": "e461ff52-b533-42c2-a4ba-92acee23887d",
+        "clientId": "721d7de0-2d20-497d-bb2f-fc24363c95b8"
+    }
+}

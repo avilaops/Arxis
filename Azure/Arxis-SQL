@@ -1,0 +1,46 @@
+{
+    "apiVersion": "2024-05-01-preview",
+    "id": "/subscriptions/3b49f371-dd88-46c7-ba30-aeb54bd5c2f6/resourceGroups/Arxis/providers/Microsoft.Sql/servers/arxis/databases/Arxis",
+    "name": "Arxis",
+    "type": "microsoft.sql/servers/databases",
+    "sku": {
+        "name": "GP_S_Gen5",
+        "tier": "GeneralPurpose",
+        "family": "Gen5",
+        "capacity": 2
+    },
+    "kind": "v12.0,user,vcore,serverless,freelimit",
+    "location": "westeurope",
+    "properties": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "maxSizeBytes": 34359738368,
+        "status": "Paused",
+        "databaseId": "cd350481-9025-4850-b82f-f833d520b7ef",
+        "creationDate": "2025-12-23T08:54:50.117Z",
+        "currentServiceObjectiveName": "GP_S_Gen5_2",
+        "requestedServiceObjectiveName": "GP_S_Gen5_2",
+        "defaultSecondaryLocation": "northeurope",
+        "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+        "zoneRedundant": false,
+        "maxLogSizeBytes": 193273528320,
+        "earliestRestoreDate": "2025-12-23T08:58:12Z",
+        "readScale": "Disabled",
+        "currentSku": {
+            "name": "GP_S_Gen5",
+            "tier": "GeneralPurpose",
+            "family": "Gen5",
+            "capacity": 2
+        },
+        "autoPauseDelay": 60,
+        "currentBackupStorageRedundancy": "Local",
+        "requestedBackupStorageRedundancy": "Local",
+        "minCapacity": 0.5,
+        "pausedDate": "2025-12-23T09:10:39.36Z",
+        "maintenanceConfigurationId": "/subscriptions/3b49f371-dd88-46c7-ba30-aeb54bd5c2f6/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default",
+        "isLedgerOn": false,
+        "isInfraEncryptionEnabled": false,
+        "useFreeLimit": true,
+        "freeLimitExhaustionBehavior": "AutoPause",
+        "availabilityZone": "NoPreference"
+    }
+}
