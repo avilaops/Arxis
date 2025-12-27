@@ -12,5 +12,19 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'mui-core': ['@mui/material', '@mui/icons-material'],
+          'mui-data': ['@mui/x-data-grid', '@mui/x-date-pickers'],
+          'charts': ['recharts'],
+          'utils': ['axios', 'dayjs']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600
   }
 })
