@@ -48,17 +48,11 @@ jobs:
       run: dotnet publish --configuration Release --no-build --output ./publish
       working-directory: ${{ env.WORKING_DIRECTORY }}
 
-    - name: 🔐 Azure Login
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_32E0F01D5B614D2AA49E4264B5644273 }}
-        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D7166BD585C64EAAB1891B254500223E }}
-        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FA67118CA3C245008A7E96EB5EA5B039 }}
-
-    - name: 🚀 Deploy to Azure App Service
+    - name: � Deploy to Azure App Service
       uses: azure/webapps-deploy@v3
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: ${{ env.WORKING_DIRECTORY }}/publish
 
     - name: 🧹 Cleanup
