@@ -106,6 +106,7 @@ class AnalyticsService {
    * Track when user views pricing or a specific plan
    */
   async trackPlanInterest(planName: string, planPrice: number) {
+    const data: PlanInterest = { planName, planPrice, userId: this.userId || undefined };
     this.trackEvent('PlanInterest', {
       userId: this.userId,
       planName,
@@ -129,6 +130,7 @@ class AnalyticsService {
   async trackUpgradeIntent(fromPlan: string, toPlan: string) {
     if (!this.userId) return;
 
+    const data: UpgradeIntent = { userId: this.userId, fromPlan, toPlan };
     this.trackEvent('UpgradeIntent', {
       userId: this.userId,
       fromPlan,
@@ -175,6 +177,7 @@ class AnalyticsService {
   async trackCheckoutCompleted(planName: string, amount: number, paymentMethod: string) {
     if (!this.userId) return;
 
+    const data: CheckoutCompleted = { userId: this.userId, planName, amount, paymentMethod };
     this.trackEvent('CheckoutCompleted', {
       userId: this.userId,
       planName,
@@ -200,6 +203,7 @@ class AnalyticsService {
   async trackCheckoutAbandoned(planName: string, amount: number, reason: string) {
     if (!this.userId) return;
 
+    const data: CheckoutAbandoned = { userId: this.userId, planName, amount, reason };
     this.trackEvent('CheckoutAbandoned', {
       userId: this.userId,
       planName,
@@ -225,6 +229,7 @@ class AnalyticsService {
   async trackFeatureUsed(featureName: string, properties?: Record<string, string>) {
     if (!this.userId) return;
 
+    const data: FeatureUsed = { userId: this.userId, featureName, properties };
     this.trackEvent('FeatureUsed', {
       userId: this.userId,
       featureName,
@@ -246,6 +251,7 @@ class AnalyticsService {
    * Track conversion funnel steps
    */
   async trackFunnelStep(funnelName: string, stepName: string, properties?: Record<string, string>) {
+    const data: FunnelStep = { funnelName, stepName, userId: this.userId || undefined, properties };
     this.trackEvent('FunnelStep', {
       userId: this.userId,
       funnelName,

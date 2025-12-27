@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+declare module 'react-dom/client';
+
 interface ImportMetaEnv {
   // Vite built-in
   readonly DEV: boolean;
