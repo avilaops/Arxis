@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: arxis-api
+  AZURE_WEBAPP_NAME: Arxis
   DOTNET_VERSION: '8.0.x'
   WORKING_DIRECTORY: './src/Arxis.API'
 
