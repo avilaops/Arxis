@@ -42,13 +42,13 @@ export enum ProjectType {
 
 export const projectService = {
   getAll: () => apiService.get<Project[]>('/projects'),
-  
+
   getById: (id: string) => apiService.get<Project>(`/projects/${id}`),
-  
+
   create: (project: Partial<Project>) => apiService.post<Project>('/projects', project),
-  
-  update: (id: string, project: Partial<Project>) => 
+
+  update: (id: string, project: Partial<Project>) =>
     apiService.put<void, Partial<Project>>(`/projects/${id}`, project),
-  
+
   delete: (id: string) => apiService.delete<void>(`/projects/${id}`),
 };

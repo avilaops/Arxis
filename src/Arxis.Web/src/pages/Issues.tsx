@@ -704,7 +704,7 @@ export const Issues: React.FC = () => {
         field: 'responseDueDate',
         headerName: 'SLA',
         width: 140,
-        valueGetter: (params) => formatDate(params.row.responseDueDate),
+        valueGetter: (params: any) => formatDate(params.row.responseDueDate),
       },
       {
         field: 'type',
@@ -716,7 +716,7 @@ export const Issues: React.FC = () => {
         field: 'createdAt',
         headerName: 'Criado em',
         width: 150,
-        valueGetter: (params) => formatDate(params.row.createdAt),
+        valueGetter: (params: any) => formatDate(params.row.createdAt),
       },
     ],
     [],

@@ -15,7 +15,7 @@ import {
   ToggleButton,
   Divider,
 } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
   Add as AddIcon,
   Edit as EditIcon,

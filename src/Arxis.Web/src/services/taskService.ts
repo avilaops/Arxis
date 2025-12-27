@@ -40,18 +40,18 @@ export enum TaskPriority {
 }
 
 export const taskService = {
-  getByProject: (projectId: string) => 
+  getByProject: (projectId: string) =>
     apiService.get<WorkTask[]>(`/tasks/project/${projectId}`),
-  
+
   getById: (id: string) => apiService.get<WorkTask>(`/tasks/${id}`),
-  
+
   create: (task: Partial<WorkTask>) => apiService.post<WorkTask>('/tasks', task),
-  
-  update: (id: string, task: Partial<WorkTask>) => 
+
+  update: (id: string, task: Partial<WorkTask>) =>
     apiService.put<void, Partial<WorkTask>>(`/tasks/${id}`, task),
-  
-  updateStatus: (id: string, status: TaskStatus) => 
+
+  updateStatus: (id: string, status: TaskStatus) =>
     apiService.patch<void, TaskStatus>(`/tasks/${id}/status`, status),
-  
+
   delete: (id: string) => apiService.delete<void>(`/tasks/${id}`),
 };
