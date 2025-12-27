@@ -28,6 +28,9 @@ public class DashboardController : ControllerBase
         _logger = logger;
         _dashboardService = dashboardService;
         _clarityService = clarityService;
+    }
+
+    /// <summary>
     /// Get complete dashboard overview with all KPIs
     /// </summary>
     [HttpGet("overview")]

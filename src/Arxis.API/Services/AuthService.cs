@@ -115,9 +115,9 @@ public class AuthService : IAuthService
 
     public string GenerateJwtToken(Guid userId, string email, string role)
     {
-        var jwtKey = _configuration["Jwt:Key"] 
+        var jwtKey = _configuration["Jwt:Key"]
             ?? throw new InvalidOperationException("JWT Key not configured");
-        
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -139,5 +139,30 @@ public class AuthService : IAuthService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<User?> GetUserByEmail(string email)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
+    }
+
+    public async Task<List<User>> GetAllUsers()
+    {
+        return await _context.Users
+            .Where(u => !u.IsDeleted)
+            .OrderByDescending(u => u.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task UpdatePassword(Guid userId, string newPassword)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+            throw new Exception("User not found");
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        user.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
     }
 }

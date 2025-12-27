@@ -80,4 +80,38 @@ public class AuthController : ControllerBase
             role
         });
     }
+
+    /// <summary>
+    /// Reset password (DEV ONLY - Remove in production)
+    /// </summary>
+    [HttpPost("reset-password-dev")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ResetPasswordDev([FromBody] ResetPasswordDevRequest request)
+    {
+        var user = await _authService.GetUserByEmail(request.Email);
+        if (user == null)
+            return NotFound(new { message = "Usuário não encontrado" });
+
+        await _authService.UpdatePassword(user.Id, request.NewPassword);
+
+        _logger.LogInformation("Password reset for: {Email}", request.Email);
+        return Ok(new { message = "Senha resetada com sucesso!", email = request.Email });
+    }
+
+    /// <summary>
+    /// List all users (DEV ONLY)
+    /// </summary>
+    [HttpGet("users")]
+    public async Task<IActionResult> GetUsers()
+    {
+        var users = await _authService.GetAllUsers();
+        return Ok(users.Select(u => new {
+            u.Id,
+            u.Email,
+            Name = $"{u.FirstName} {u.LastName}".Trim(),
+            u.Role,
+            u.CreatedAt
+        }));
+    }
 }

@@ -12,8 +12,32 @@ using Arxis.API.Services;
 using Arxis.API.Configuration;
 using DotNetEnv;
 
-// Load .env file
-Env.Load();
+// Load .env file da raiz do projeto (../../.env relativo ao diretório da API)
+var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
+if (File.Exists(envPath))
+{
+    Env.Load(envPath);
+    Console.WriteLine($"✅ .env carregado de: {envPath}");
+}
+else
+{
+    Console.WriteLine($"⚠️  Arquivo .env não encontrado em: {envPath}");
+    // Tentar carregar do diretório atual
+    Env.Load();
+}
+
+// Configurar variáveis de ambiente para que o .NET possa lê-las
+// Formato: Seção__SubSeção (dois underscores)
+var clarityToken = Environment.GetEnvironmentVariable("CLARITY_API_TOKEN");
+var clarityProjectId = Environment.GetEnvironmentVariable("CLARITY_PROJECT_ID");
+
+Console.WriteLine($"CLARITY_API_TOKEN: {(string.IsNullOrEmpty(clarityToken) ? "VAZIO" : clarityToken.Substring(0, Math.Min(20, clarityToken.Length)) + "...")}");
+Console.WriteLine($"CLARITY_PROJECT_ID: {(string.IsNullOrEmpty(clarityProjectId) ? "VAZIO" : clarityProjectId)}");
+
+if (!string.IsNullOrEmpty(clarityToken))
+    Environment.SetEnvironmentVariable("Clarity__ApiToken", clarityToken);
+if (!string.IsNullOrEmpty(clarityProjectId))
+    Environment.SetEnvironmentVariable("Clarity__ProjectId", clarityProjectId);
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -165,6 +189,21 @@ if (app.Environment.IsDevelopment())
     {
         dbContext.Database.Migrate();
         app.Logger.LogInformation("Database migrated successfully");
+
+        // Debug: Verificar se variáveis do Clarity foram carregadas
+        var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+        var tokenValue = config["Clarity:ApiToken"];
+        var projectIdValue = config["Clarity:ProjectId"];
+
+        if (!string.IsNullOrEmpty(tokenValue))
+            app.Logger.LogInformation($"✅ Clarity Token configurado: {tokenValue.Substring(0, Math.Min(20, tokenValue.Length))}...");
+        else
+            app.Logger.LogWarning("⚠️  Clarity Token NÃO configurado");
+
+        if (!string.IsNullOrEmpty(projectIdValue))
+            app.Logger.LogInformation($"✅ Clarity Project ID configurado: {projectIdValue}");
+        else
+            app.Logger.LogWarning("⚠️  Clarity Project ID NÃO configurado");
     }
     catch (Exception ex)
     {
