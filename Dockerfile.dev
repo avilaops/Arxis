@@ -1,0 +1,39 @@
+# Dockerfile para DESENVOLVIMENTO com hot-reload
+
+# API Development
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS api-dev
+WORKDIR /app
+
+# Install dotnet-watch for hot reload
+RUN dotnet tool install --global dotnet-watch
+
+# Copy csproj and restore
+COPY ["src/Arxis.API/Arxis.API.csproj", "src/Arxis.API/"]
+COPY ["src/Arxis.Domain/Arxis.Domain.csproj", "src/Arxis.Domain/"]
+COPY ["src/Arxis.Infrastructure/Arxis.Infrastructure.csproj", "src/Arxis.Infrastructure/"]
+RUN dotnet restore "src/Arxis.API/Arxis.API.csproj"
+
+# Copy everything
+COPY src/ ./src/
+
+WORKDIR /app/src/Arxis.API
+EXPOSE 5000 5001
+
+# Use dotnet watch for hot reload
+ENTRYPOINT ["dotnet", "watch", "run", "--no-restore", "--urls", "http://+:5000;https://+:5001"]
+
+# Web Development
+FROM node:20-alpine AS web-dev
+WORKDIR /app
+
+# Install dependencies
+COPY src/Arxis.Web/package*.json ./
+RUN npm install
+
+# Copy source (will be overridden by volume mount)
+COPY src/Arxis.Web/ ./
+
+EXPOSE 5173
+
+# Start Vite dev server with hot reload
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

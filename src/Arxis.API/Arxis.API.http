@@ -1,0 +1,6 @@
+@Arxis.API_HostAddress = http://localhost:5136
+
+GET {{Arxis.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+README.md
+LICENSE
+
+# CI/CD
+.github/
+.azure/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.sln.docstates
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+**/dist/
+**/build/
+
+# Test outputs
+**/TestResults/
+**/coverage/
+**/*.trx
+
+# Node
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+**/logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Runtime data
+**/data/
+**/*.db
+**/*.db-shm
+**/*.db-wal
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Certificates
+**/*.pfx
+**/*.p12
+**/*.pem
+**/*.key
+**/*.crt

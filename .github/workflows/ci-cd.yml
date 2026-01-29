@@ -1,0 +1,126 @@
+name: CI/CD Pipeline
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  NODE_VERSION: '20.x'
+  SOLUTION_PATH: './Arxis.sln'
+  API_PROJECT_PATH: './src/Arxis.API/Arxis.API.csproj'
+  WEB_PROJECT_PATH: './src/Arxis.Web'
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: 🔧 Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: 📦 Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
+    
+    - name: 🏗️ Build solution
+      run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+    
+    - name: 🧪 Run tests
+      run: dotnet test ${{ env.SOLUTION_PATH }} --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+    
+    - name: 📊 Publish test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Test Results
+        path: '**/test-results.trx'
+        reporter: dotnet-trx
+    
+    - name: 📈 Code coverage
+      run: dotnet test ${{ env.SOLUTION_PATH }} --configuration Release --no-build --collect:"XPlat Code Coverage" --logger "trx"
+    
+    - name: 📤 Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      if: always()
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: '**/coverage.cobertura.xml'
+        fail_ci_if_error: false
+
+  security-scan:
+    name: Security Scan
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🔒 Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: 📤 Upload Trivy results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  deploy-web:
+    name: Deploy Web to GitHub Pages
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: 📦 Install frontend dependencies
+      run: npm ci
+      working-directory: ${{ env.WEB_PROJECT_PATH }}
+
+    - name: 🏗️ Build frontend
+      run: npm run build
+      working-directory: ${{ env.WEB_PROJECT_PATH }}
+
+    - name: 📤 Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ${{ env.WEB_PROJECT_PATH }}/dist
+
+    - name: 🚀 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

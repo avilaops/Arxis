@@ -1,0 +1,161 @@
+.arxis-app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a1a;
+  color: #e0e0e0;
+}
+
+/* Top Bar */
+.top-bar {
+  height: 48px;
+  background: #2a2a2a;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: #0078d4;
+}
+
+.top-nav {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.top-nav button {
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: #e0e0e0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.top-nav button:hover {
+  background: #383838;
+}
+
+.top-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.top-actions button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 18px;
+  transition: background 0.2s;
+}
+
+.top-actions button:hover {
+  background: #383838;
+}
+
+/* Main Container */
+.main-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Activity Bar */
+.activity-bar {
+  width: 60px;
+  background: #252525;
+  border-right: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  gap: 4px;
+}
+
+.module-btn {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.module-btn:hover {
+  background: #383838;
+}
+
+.module-btn.active {
+  border-left-color: #0078d4;
+  background: #2a2a2a;
+}
+
+.module-btn .icon {
+  font-size: 24px;
+}
+
+/* Content Area */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.module-placeholder {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.module-placeholder h2 {
+  font-size: 32px;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin: 0 0 16px 0;
+}
+
+.module-placeholder p {
+  color: #999;
+  font-size: 16px;
+  margin: 0;
+}
+
+.module-header {
+  height: 60px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+}
+
+.module-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.module-content {
+  flex: 1;
+  padding: 24px;
+  overflow: auto;
+}
+
+button {
+  font-family: inherit;
+}

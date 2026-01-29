@@ -1,0 +1,73 @@
+# Docker Compose para DESENVOLVIMENTO
+# Usa hot-reload e volumes montados para desenvolvimento rápido
+
+services:
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: arxis-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - arxis-network
+
+  # API Backend (com hot-reload)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: api-dev
+    container_name: arxis-api-dev
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;https://+:5001
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/arxis.db
+      - Redis__ConnectionString=redis:6379
+      - Redis__InstanceName=ArxisCache
+      - Redis__Enabled=true
+      - Jwt__Secret=your-super-secret-key-change-in-production-min-32-chars
+      - Jwt__Issuer=ArxisAPI
+      - Jwt__Audience=ArxisWeb
+      - Jwt__ExpirationMinutes=60
+    volumes:
+      - ./src:/app/src:delegated
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+    networks:
+      - arxis-network
+
+  # Frontend Web (com hot-reload Vite)
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: web-dev
+    container_name: arxis-web-dev
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    volumes:
+      - ./src/Arxis.Web:/app:delegated
+      - /app/node_modules
+    depends_on:
+      - api
+    networks:
+      - arxis-network
+    stdin_open: true
+    tty: true
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  arxis-network:
+    driver: bridge

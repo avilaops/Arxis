@@ -1,0 +1,86 @@
+services:
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: arxis-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - arxis-network
+
+  # API Backend
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    container_name: arxis-api
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/arxis.db
+      - Redis__ConnectionString=redis:6379
+      - Redis__InstanceName=ArxisCache
+      - Redis__Enabled=true
+      - Jwt__Secret=your-super-secret-key-change-in-production-min-32-chars
+      - Jwt__Issuer=ArxisAPI
+      - Jwt__Audience=ArxisWeb
+      - Jwt__ExpirationMinutes=60
+    volumes:
+      - api-data:/app/data
+      - api-logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - arxis-network
+    restart: unless-stopped
+
+  # Frontend Web
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    container_name: arxis-web
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - arxis-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+    driver: local
+  api-data:
+    driver: local
+  api-logs:
+    driver: local
+
+networks:
+  arxis-network:
+    driver: bridge
